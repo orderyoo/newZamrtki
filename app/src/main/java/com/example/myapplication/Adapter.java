@@ -8,23 +8,18 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 public class Adapter extends ArrayAdapter<List> {
 
     private final Context context;
-    private  final List<String> itemName;
-
+    private  final List<Zametka> itemName;
 
     public Adapter(Context context, int resource, List<Zametka> itemName) {
-
         super(context, resource);
         this.context = context;
-        Function<Zametka, String> a = Zametka::getTitle;
-        this.itemName = (ArrayList<String>) itemName.stream().map(a);
+        this.itemName = itemName;
     }
     @Override
     public int getCount() {
@@ -36,13 +31,13 @@ public class Adapter extends ArrayAdapter<List> {
         @SuppressLint("ViewHolder") View view = inflater.inflate(android.R.layout.simple_expandable_list_item_1, parent, false);
         TextView textView = view.findViewById(android.R.id.text1);
         textView.setTextSize(20);
-        textView.setText(itemName.get(position));
+        textView.setText(itemName.get(position).getTitle());
         return view;
     }
 
     @Override
     public List<String> getItem(int position) {
-        return Collections.singletonList(itemName.get(position));
+        return Collections.singletonList(itemName.get(position).getTitle());
     }
 
 }

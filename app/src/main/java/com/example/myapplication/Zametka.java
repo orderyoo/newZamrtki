@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
-public class Zametka {
+import java.io.Serializable;
+
+public class Zametka implements Serializable {
     private String title;
     private String txt;
     Zametka(String title, String txt){

@@ -6,8 +6,23 @@
     tools:context=".NoteActivity">
 
     <Button
+        android:id="@+id/buttonBack"
         android:text="@string/ButtonBack"
         android:onClick="onClickButtonBack"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        />
+    <EditText
+        android:id="@+id/titleEditor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonBack"
+        />
+    <EditText
+        android:id="@+id/textEditor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titleEditor"
+        />
+
 </RelativeLayout>

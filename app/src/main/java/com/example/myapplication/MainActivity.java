@@ -2,21 +2,18 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<Zametka> itemName = new ArrayList<Zametka>();
+
+    public static final int NOTE_ACTIVITY_REQUEST_CODE = 1;
+    public ArrayList<Zametka> NoteList;
     Adapter adapter;
 
     @Override
@@ -24,23 +21,51 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ListView listView = findViewById(R.id.listItem);
-        adapter = new Adapter(this, android.R.layout.simple_expandable_list_item_1, itemName);
-
         DataBase.createInstance(this);
+        if(DataBase.info()){
+            NoteList = DataBase.getInstance().getItem("listOfItem");
+        } else {
+            NoteList = new ArrayList<>();
+        }
 
+        ListView listView = findViewById(R.id.listItem);
+        adapter = new Adapter(this, android.R.layout.simple_expandable_list_item_1, NoteList);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener((parent, v, position, id) -> {
             Intent intent = new Intent(MainActivity.this, NoteActivity.class);
-            startActivity(intent);
+            intent.putExtra("item", NoteList.get(position));
+            intent.putExtra("position", position);
+            startActivityForResult(intent, NOTE_ACTIVITY_REQUEST_CODE);
+        });
+
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            NoteList.remove(position);
+            adapter.notifyDataSetChanged();
+            return false;
         });
     }
+
     public void onClickButtonAdd(View view){
-        Zametka a = new Zametka("new", "bts");
-        itemName.add(a);
-        DataBase.getInstance().addItem(a);
+        Zametka a = new Zametka("new", "Текст");
+        NoteList.add(a);
         adapter.notifyDataSetChanged();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == NOTE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK && data != null) {
+                Zametka newItem = (Zametka) data.getSerializableExtra("newItem");
+                int position1 = data.getIntExtra("position1", -1);
+                NoteList.set(position1, newItem);
+                DataBase.getInstance().addItem(NoteList);
+                adapter.notifyDataSetChanged();
+            }
+        }
+    }
+
 
 }
